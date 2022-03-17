@@ -5,47 +5,186 @@ using System.Timers;
 namespace cmdclock {
     class Program {
         static void Main(string[] args) {
+            bool isCursorVisibile = Console.CursorVisible;
             Console.Clear();
             Timer timer = new Timer(1000);
             timer.Elapsed += Timer_Elapsed;
             timer.Start();
             Console.ReadLine();
             timer.Stop();
+            Console.CursorVisible = isCursorVisibile;
         }
-        static void Write(int charcode) {
-            Console.Write((char)charcode);
-        }
-        static void WriteLine(int charcode) {
-            Console.WriteLine((char)charcode);
+
+        private static void WriteDigit(string[][] container, string digit, int position, string fill) {
+            position = (position * 6) + 1;
+            switch (digit) {
+                case "0":
+                    for (int i = 0; i < 4; i++) {
+                        container[0][position + i] = fill;
+                        container[4][position + i] = fill;
+                    }
+                    container[1][position] = fill;
+                    container[1][position + 3] = fill;
+                    container[2][position] = fill;
+                    container[2][position + 3] = fill;
+                    container[3][position] = fill;
+                    container[3][position + 3] = fill;
+                    break;
+                case "1":
+                    for (int i = 0; i < 5; i++) {
+                        container[i][position + 3] = fill;
+                    }
+                    break;
+                case "2":
+                    for (int i = 0; i < 4; i++) {
+                        container[0][position + i] = fill;
+                        container[2][position + i] = fill;
+                        container[4][position + i] = fill;
+                    }
+                    container[1][position + 3] = fill;
+                    container[3][position] = fill;
+                    break;
+                case "3":
+                    for (int i = 0; i < 4; i++) {
+                        container[0][position + i] = fill;
+                        container[2][position + i] = fill;
+                        container[4][position + i] = fill;
+                    }
+                    container[1][position + 3] = fill;
+                    container[3][position + 3] = fill;
+                    break;
+                case "4":
+                    for (int i = 0; i < 5; i++) {
+                        container[i][position + 3] = fill;
+                    }
+                    for (int i = 0; i < 3; i++) {
+                        container[i][position] = fill;
+                    }
+                    container[2][position + 1] = fill;
+                    container[2][position + 2] = fill;
+                    break;
+                case "5":
+                    for (int i = 0; i < 4; i++) {
+                        container[0][position + i] = fill;
+                        container[2][position + i] = fill;
+                        container[4][position + i] = fill;
+                    }
+                    container[1][position] = fill;
+                    container[3][position + 3] = fill;
+                    break;
+                case "6":
+                    for (int i = 0; i < 4; i++) {
+                        container[0][position + i] = fill;
+                        container[2][position + i] = fill;
+                        container[4][position + i] = fill;
+                    }
+                    container[1][position] = fill;
+                    container[3][position] = fill;
+                    container[3][position + 3] = fill;
+                    break;
+                case "7":
+                    for (int i = 0; i < 3; i++) {
+                        container[0][position + i] = fill;
+                    }
+                    for (int i = 0; i < 5; i++) {
+                        container[i][position + 3] = fill;
+                    }
+                    break;
+                case "8":
+                    for (int i = 0; i < 5; i++) {
+                        container[i][position] = fill;
+                        container[i][position + 3] = fill;
+                    }
+                    for (int i = 1; i < 3; i++) {
+                        container[0][position + i] = fill;
+                        container[2][position + i] = fill;
+                        container[4][position + i] = fill;
+                    }
+                    break;
+                case "9":
+                    for (int i = 0; i < 4; i++) {
+                        container[0][position + i] = fill;
+                        container[2][position + i] = fill;
+                        container[4][position + i] = fill;
+                    }
+                    container[1][position] = fill;
+                    container[1][position + 3] = fill;
+                    container[3][position + 3] = fill;
+                    break;
+                default:
+                    break;
+            }
         }
 
         private static void Timer_Elapsed(object sender, ElapsedEventArgs e) {
-            string topleft = "┌";
+            string topLeft = "┌";
             string hline = "─";
-            string topright = "┐";
+            string topRight = "┐";
             string vline = "│";
-            string bottomleft = "└";
-            string bottomright = "┘";
+            string bottomLeft = "└";
+            string bottomRight = "┘";
+            string fill1 = "░";
+            string fill2 = "▒";
+            string fill3 = "▓";
+            string fill4 = "█";
             string dateNow = DateTime.Now.ToString("HH:mm:ss");
+
+            string[][] display = new string[5][];
+            for (int i = 0; i < 5; i++) {
+                display[i] = new string[48];
+            }
 
             Console.CursorTop = 0;
             Console.CursorLeft = 0;
+            Console.CursorVisible = false;
             Console.OutputEncoding = Encoding.Unicode;
-            Console.Write(topleft);
-            for (int i = 0; i < 8; i++) {
-                Console.Write(hline);
+
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 48; j++) {
+                    display[i][j] = " ";
+                }
             }
-            Console.Write(topright);
-            Console.WriteLine();
-            Console.Write(vline);
-            Console.Write(dateNow);
-            Console.WriteLine(vline);
-            Console.Write(bottomleft);
-            for (int i = 0; i < 8; i++) {
-                Console.Write(hline);
+
+            WriteTime(dateNow, display, fill4);
+
+            string[] hlineRow = new string[48];
+            for (int i = 0; i < 48; i++) {
+                hlineRow[i] = hline;
             }
-            Console.Write(bottomright);
-            // Console.Write(String.Format("\r{0, " + (Console.WindowWidth / 2 + dateNow.Length / 2) + "}", dateNow));
+
+            string topBorder = String.Format("{0}{1}{2}", topLeft, String.Join("", hlineRow), topRight);
+            Console.WriteLine(String.Format("{0, " + (Console.WindowWidth / 2 + topBorder.Length / 2) + "}", topBorder));
+
+            for (int i = 0; i < 5; i++) {
+                string joinedRow = String.Join("", display[i]);
+                joinedRow = String.Format("{0}{1}{0}", vline, joinedRow);
+                Console.WriteLine(String.Format("{0, " + (Console.WindowWidth / 2 + joinedRow.Length / 2) + "}", joinedRow));
+            }
+
+            string bottomBorder = String.Format("{0}{1}{2}", bottomLeft, String.Join("", hlineRow), bottomRight);
+            Console.WriteLine(String.Format("{0, " + (Console.WindowWidth / 2 + bottomBorder.Length / 2) + "}", bottomBorder));
+        }
+
+        private static void WriteTime(string dateNow, string[][] display, string fill) {
+            WriteColons(display, fill);
+
+            WriteDigit(display, dateNow[0].ToString(), 0, fill);
+            WriteDigit(display, dateNow[1].ToString(), 1, fill);
+            WriteDigit(display, dateNow[3].ToString(), 3, fill);
+            WriteDigit(display, dateNow[4].ToString(), 4, fill);
+            WriteDigit(display, dateNow[6].ToString(), 6, fill);
+            WriteDigit(display, dateNow[7].ToString(), 7, fill);
+        }
+
+        private static void WriteColons(string[][] display, string fill) {
+            display[1][14] = fill;
+            display[1][15] = fill;
+            display[3][14] = fill;
+            display[3][15] = fill;
+            display[1][32] = fill;
+            display[1][33] = fill;
+            display[3][32] = fill;
+            display[3][33] = fill;
         }
     }
 }
