@@ -4,6 +4,8 @@ using System.Timers;
 
 namespace cmdclock {
     class Program {
+        public static string[][] display = new string[5][];
+
         static void Main(string[] args) {
             bool isCursorVisibile = Console.CursorVisible;
             Console.Clear();
@@ -117,19 +119,8 @@ namespace cmdclock {
         }
 
         private static void Timer_Elapsed(object sender, ElapsedEventArgs e) {
-            string topLeft = "┌";
-            string hline = "─";
-            string topRight = "┐";
-            string vline = "│";
-            string bottomLeft = "└";
-            string bottomRight = "┘";
-            string fill1 = "░";
-            string fill2 = "▒";
-            string fill3 = "▓";
-            string fill4 = "█";
             string dateNow = DateTime.Now.ToString("HH:mm:ss");
 
-            string[][] display = new string[5][];
             for (int i = 0; i < 5; i++) {
                 display[i] = new string[48];
             }
@@ -145,23 +136,23 @@ namespace cmdclock {
                 }
             }
 
-            WriteTime(dateNow, display, fill4);
+            WriteTime(dateNow, display, Constants.FILL_4);
 
             string[] hlineRow = new string[48];
             for (int i = 0; i < 48; i++) {
-                hlineRow[i] = hline;
+                hlineRow[i] = Constants.H_LINE;
             }
 
-            string topBorder = String.Format("{0}{1}{2}", topLeft, String.Join("", hlineRow), topRight);
+            string topBorder = String.Format("{0}{1}{2}", Constants.TOP_LEFT, String.Join("", hlineRow), Constants.TOP_RIGHT);
             Console.WriteLine(String.Format("{0, " + (Console.WindowWidth / 2 + topBorder.Length / 2) + "}", topBorder));
 
             for (int i = 0; i < 5; i++) {
                 string joinedRow = String.Join("", display[i]);
-                joinedRow = String.Format("{0}{1}{0}", vline, joinedRow);
+                joinedRow = String.Format("{0}{1}{0}", Constants.V_LINE, joinedRow);
                 Console.WriteLine(String.Format("{0, " + (Console.WindowWidth / 2 + joinedRow.Length / 2) + "}", joinedRow));
             }
 
-            string bottomBorder = String.Format("{0}{1}{2}", bottomLeft, String.Join("", hlineRow), bottomRight);
+            string bottomBorder = String.Format("{0}{1}{2}", Constants.BOTTOM_LEFT, String.Join("", hlineRow), Constants.BOTTOM_RIGHT);
             Console.WriteLine(String.Format("{0, " + (Console.WindowWidth / 2 + bottomBorder.Length / 2) + "}", bottomBorder));
         }
 
